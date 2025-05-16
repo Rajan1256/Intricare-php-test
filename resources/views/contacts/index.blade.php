@@ -238,6 +238,31 @@
     </div>
 
 
+    <div class="modal fade" id="showMergeContactsModal" tabindex="-1" aria-hidden="true">
+        <div class="modal-dialog modal-lg">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title">Merge Contacts</h5>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                </div>
+                <form id="mergeContactsForm">
+                    <div class="modal-body">
+                        <div id="mergePreview" class="border p-3 rounded">
+                            <h6>Merge Preview</h6>
+                            <div id="showMergeDetails">
+
+                            </div>
+                        </div>
+                    </div>
+                    <div class="modal-footer">
+                        <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">close</button>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+
+
     <div class="modal fade" id="customFieldsModal" tabindex="-1" aria-hidden="true">
         <div class="modal-dialog">
             <div class="modal-content">
@@ -537,6 +562,47 @@
                         });
                         $('#masterContactSelect').html(options);
                         $('#mergeContactsModal').modal('show');
+                    });
+                });
+
+
+                $(document).on('click', '.show-merge-contact', function() {
+                    const contactId = $(this).data('id');
+                    $('#mergedContactId').val(contactId);
+
+
+                    $.get('/contacts/' + contactId, function(masterContact) {
+
+                        let mergedContact = masterContact.merged_users;
+
+                        let html =
+                            `<p><strong>Master Contact:</strong> ${masterContact.contact.name} (${masterContact.contact.email})</p>`;
+                        mergedContact.forEach(contact => {
+
+                            html += `<hr><h6>Data to be merged:</h6><ul>`;
+                            html += `<li>Merged Contact: ${contact.merged_contact.name} (${contact.merged_contact.email})</li>`;
+                            if (contact.merged_contact.phone) {
+                                html +=
+                                    `<li>Phone: ${contact.merged_contact.phone}</li>`;
+                            }
+                            if (contact.merged_contact.profile_image) {
+                                html += `<li>Profile Image</li><img src="/storage/${contact.merged_contact.profile_image}" class="img-thumbnail" style="max-height: 100px;">`;
+                            }
+                            if (contact.merged_contact.additional_file) {
+                                html += `<li>Additional File</li>`;
+                            }
+
+                             const mergedCustomFields = JSON.parse(contact.merged_data);
+                            console.log('ss->',mergedCustomFields);
+                             for (const field in mergedCustomFields) {
+                                     html +=
+                                         `<li>"${field}": ${mergedCustomFields[field]['merged_value']}</li>`;
+                             }
+
+                            html += `</ul>`;
+                            $('#showMergeDetails').html(html);
+                        });
+                        $('#showMergeContactsModal').modal('show');
                     });
                 });
 

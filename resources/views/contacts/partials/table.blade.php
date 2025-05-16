@@ -34,6 +34,10 @@
                         data-id="{{ $contact->id }}">
                     <i class="bi bi-arrow-merge"></i> Merge
                 </button>
+                <button class="btn btn-sm btn-outline-secondary show-merge-contact"
+                        data-id="{{ $contact->id }}">
+                    <i class="bi bi-arrow-merge"></i>Show Merge
+                </button>
             </td>
         </tr>
         @empty

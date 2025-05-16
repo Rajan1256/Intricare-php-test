@@ -165,7 +165,8 @@ class ContactController extends Controller
             'contact' => $contact,
             'custom_fields' => ContactCustomField::where('contact_id', $contact->id)
                 ->with('field')
-                ->get()
+                ->get(),
+            'merged_users'=> MergedContact::where('master_contact_id', $contact->id)->with('mergedContact')->get()
         ]);
     }
 
